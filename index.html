@@ -3,54 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AK Updated Wingo</title>
+    <title>AK  Wingo colour</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'El Messiri', sans-serif; text-align: center; }
-        body { background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaUefxA6uYUk7SNTE-zautkRqmg6CK-4irbhgcysqWRJRbSK0tnS8hp_XV&s=10') no-repeat center center fixed; background-size: cover; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: white; }
-        .container { width: 150%; max-width: 400px; }
-        .box { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px); border-radius: 13px; padding: 15px; margin-bottom: 15px; }
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
-        .status-box { padding: 10px; border-radius: 10px; font-size: 16px; font-weight: bold; }
-        .green { background: rgba(0, 255, 0, 0.3); border: 1px solid green; }
-        .red { background: rgba(255, 0, 0, 0.3); border: 1px solid red; }
-        .blue { background: rgba(0, 0, 255, 0.3); border: 1px solid blue; }
-        .grey { background: rgba(128, 128, 128, 0.3); border: 1px solid grey; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 5px; border-bottom: 1px solid white; }
+        body { 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            color: white; 
+        }
+        .container { 
+            width: 900%; 
+            max-width: 450px; 
+            margin: 20px auto; 
+        }
+        .box { 
+            background: rgba(255, 255, 255, 0.08); 
+            backdrop-filter: blur(12px); 
+            border-radius: 16px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+        .header-box {
+            background: linear-gradient(90deg, rgba(255,0,0,0.2) 0%, rgba(0,128,0,0.2) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px; 
+            margin-top: 15px; 
+        }
+        .status-box { 
+            padding: 15px 10px; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 80px; 
+            transition: transform 0.3s ease; 
+        }
+        .status-box:hover {
+            transform: translateY(-3px);
+        }
+        .green { 
+            background: linear-gradient(135deg, rgba(0, 255, 0, 0.15) 0%, rgba(0, 150, 0, 0.25) 100%); 
+            border: 1px solid rgba(0, 255, 0, 0.3); 
+        }
+        .red { 
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.15) 0%, rgba(150, 0, 0, 0.25) 100%); 
+            border: 1px solid rgba(255, 0, 0, 0.3); 
+        }
+        .blue { 
+            background: linear-gradient(135deg, rgba(0, 0, 255, 0.15) 0%, rgba(0, 0, 150, 0.25) 100%); 
+            border: 1px solid rgba(0, 0, 255, 0.3); 
+        }
+        .grey { 
+            background: linear-gradient(135deg, rgba(128, 128, 128, 0.15) 0%, rgba(80, 80, 80, 0.25) 100%); 
+            border: 1px solid rgba(128, 128, 128, 0.3); 
+        }
+        table { 
+            width: 100%; 
+            border-collapse: separate; 
+            border-spacing: 0 8px; 
+        }
+        th, td { 
+            padding: 10px 5px; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+        th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 700;
+        }
+        tr {
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
         .win {
             color: #00ff00;
             font-weight: bold;
             text-shadow: 
-                0 0 5px #00ff00,    /* Inner glow */
-                0 0 10px #00ff00,   /* Medium glow */
-                0 0 20px #00ff00;    /* Outer glow */
+                0 0 5px #00ff00,
+                0 0 10px #00ff00,
+                0 0 20px #00ff00;
+            animation: pulseWin 2s infinite;
         }
-        .loss { color: #ff0000; font-weight: bold; }
-        .pending { color: #0000ff; font-weight: bold; }
+        .loss { 
+            color: #ff0000; 
+            font-weight: bold; 
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        }
+        .pending { 
+            color: #0099ff; 
+            font-weight: bold; 
+            text-shadow: 0 0 5px rgba(0, 153, 255, 0.5);
+        }
+        h2 {
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            position: relative;
+            display: inline-block;
+        }
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+        }
+        @keyframes pulseWin {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .prediction-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="box">
-            <h2>SURYA AK WINGO 1M</h2>
+        <div class="box header-box">
+            <h2><i class="fas fa-crown" style="margin-right: 10px;"></i>SURYA AK WINGO 1M</h2>
         </div>
         <div class="box">
-            <p><b>Period:</b> <span id="currentPeriod">Loading...</span></p>
-            <p><b>Prediction:</b> <span id="prediction">Loading...</span></p>
-        </div>
-        <div class="box">
-            <h2>Analysis</h2>
-            <div class="grid">
-                <div class="status-box green"><p>WIN Count</p><span id="totalWins">0</span></div>
-                <div class="status-box red"><p>Lost Count</p><span id="totalLosses">0</span></div>
-                <div class="status-box blue"><p>WIN %</p><span id="accuracy">0%</span></div>
-                <div class="status-box grey"><p>Auto-Reverse</p><span>Active</span></div>
+            <div class="info-row">
+                <span><b>Period:</b></span>
+                <span id="currentPeriod">Loading...</span>
+            </div>
+            <div class="info-row">
+                <span><b>Prediction:</b></span>
+                <span id="prediction" class="prediction-value">Loading...</span>
             </div>
         </div>
         <div class="box">
-            <h2>History</h2>
+            <h2><i class="fas fa-chart-bar" style="margin-right: 10px;"></i>Analysis</h2>
+            <div class="grid">
+                <div class="status-box green">
+                    <i class="fas fa-trophy" style="margin-bottom: 5px;"></i>
+                    <p>WIN Count</p>
+                    <span id="totalWins" style="font-size: 1.3em;">0</span>
+                </div>
+                <div class="status-box red">
+                    <i class="fas fa-times-circle" style="margin-bottom: 5px;"></i>
+                    <p>Lost Count</p>
+                    <span id="totalLosses" style="font-size: 1.3em;">0</span>
+                </div>
+                <div class="status-box blue">
+                    <i class="fas fa-percentage" style="margin-bottom: 5px;"></i>
+                    <p>WIN %</p>
+                    <span id="accuracy" style="font-size: 1.3em;">0%</span>
+                </div>
+                <div class="status-box grey">
+                    <i class="fas fa-sync-alt" style="margin-bottom: 5px;"></i>
+                    <p>Auto-Reverse</p>
+                    <span style="font-size: 1.1em;">Active</span>
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <h2><i class="fas fa-history" style="margin-right: 10px;"></i>History</h2>
             <table id="historyTable">
                 <thead>
                     <tr>
