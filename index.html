@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AK  Wingo colour</title>
+    <title>AK Wingo Colour Predictor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -149,12 +149,30 @@
             font-weight: bold;
             margin-top: 5px;
         }
+        .method-info {
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+        }
+        .clear-btn {
+            background: rgba(255, 0, 0, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .clear-btn:hover {
+            background: rgba(255, 0, 0, 0.3);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="box header-box">
-            <h2><i class="fas fa-crown" style="margin-right: 10px;"></i>SURYA AK WINGO 1M</h2>
+            <h2><i class="fas fa-crown" style="margin-right: 10px;"></i>AK WINGO 1M COLOUR SERVER</h2>
         </div>
         <div class="box">
             <div class="info-row">
@@ -165,6 +183,7 @@
                 <span><b>Prediction:</b></span>
                 <span id="prediction" class="prediction-value">Loading...</span>
             </div>
+            <div id="methodInfo" class="method-info">Calculating based on period analysis...</div>
         </div>
         <div class="box">
             <h2><i class="fas fa-chart-bar" style="margin-right: 10px;"></i>Analysis</h2>
@@ -204,13 +223,46 @@
                 </thead>
                 <tbody id="historyList"></tbody>
             </table>
+            <button class="clear-btn" onclick="clearHistory()">
+                <i class="fas fa-trash-alt"></i> Clear History
+            </button>
         </div>
     </div>
 
 <script>
+    const STORAGE_KEY = 'akWingoPredictionHistory';
     let historyData = [];
     let lastFetchedPeriod = null;
-    const HISTORY_LENGTH = 10;
+    const HISTORY_LENGTH = 20; // Increased history length
+
+    // Load history from localStorage when page loads
+    function loadHistory() {
+        const savedHistory = localStorage.getItem(STORAGE_KEY);
+        if (savedHistory) {
+            historyData = JSON.parse(savedHistory);
+            // Ensure we don't exceed the max history length
+            if (historyData.length > HISTORY_LENGTH) {
+                historyData = historyData.slice(0, HISTORY_LENGTH);
+            }
+            updateStats();
+            updateHistory();
+        }
+    }
+
+    // Save history to localStorage
+    function saveHistory() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(historyData));
+    }
+
+    // Clear history
+    function clearHistory() {
+        if (confirm('Are you sure you want to clear all prediction history?')) {
+            historyData = [];
+            localStorage.removeItem(STORAGE_KEY);
+            updateStats();
+            updateHistory();
+        }
+    }
 
     async function fetchGameResult() {
         try {
@@ -240,19 +292,23 @@
         }
     }
 
-    function randomPrediction() {
-        // Predict one color (RED/GREEN) based on current minute
-        const currentMinute = new Date().getMinutes();
-        const type = currentMinute % 2 === 0 ? 'GREEN' : 'RED';
-        return {
-            type: type,
-            method: "Minute-based prediction"
-        };
-    }
-
     function getColorFromNumber(number) {
         // 1,3,7,9 is GREEN | 0,2,4,5,6,8 is RED
         return [1,3,7,9].includes(number) ? 'GREEN' : 'RED';
+    }
+
+    function newPredictionMethod(period) {
+        // New method based on last 4 digits of period number
+        const last4Digits = period.slice(-4);
+        const digitSum = last4Digits.split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+        
+        // If sum is even, predict RED, if odd, predict GREEN
+        const predictionType = digitSum % 2 === 0 ? 'RED' : 'GREEN';
+        
+        return {
+            type: predictionType,
+            method: `Period analysis (Sum: ${digitSum})`
+        };
     }
 
     async function updatePrediction() {
@@ -261,10 +317,11 @@
         if (apiResult && apiResult.period !== lastFetchedPeriod) {
             lastFetchedPeriod = apiResult.period;
             let currentPeriod = (BigInt(apiResult.period) + 1n).toString();
-            let prediction = historyData.length > 0 ? randomPrediction() : { type: "RED", method: "Initial prediction" };
+            let prediction = historyData.length > 0 ? newPredictionMethod(apiResult.period) : { type: "RED", method: "Initial prediction" };
 
             document.getElementById("currentPeriod").innerText = currentPeriod;
             document.getElementById("prediction").innerText = prediction.type;
+            document.getElementById("methodInfo").innerText = prediction.method;
 
             // Store the actual result for the previous period
             if (historyData.length > 0 && historyData[0].resultStatus === "Pending") {
@@ -279,7 +336,9 @@
                 prediction: prediction.type, 
                 result: null, 
                 resultStatus: "Pending",
-                actual: null
+                actual: null,
+                method: prediction.method,
+                timestamp: new Date().toISOString()
             });
 
             // Keep only limited history
@@ -289,6 +348,7 @@
 
             updateStats();
             updateHistory();
+            saveHistory(); // Save to localStorage after each update
         }
     }
 
@@ -320,8 +380,12 @@
         });
     }
 
-    // Initial update
-    updatePrediction();
+    // Initial load when page starts
+    document.addEventListener('DOMContentLoaded', () => {
+        loadHistory();
+        updatePrediction();
+    });
+    
     // Update every 3 seconds
     setInterval(updatePrediction, 3000);
 </script>
