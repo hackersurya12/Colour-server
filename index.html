@@ -154,19 +154,6 @@
             color: rgba(255, 255, 255, 0.7);
             margin-top: 5px;
         }
-        .clear-btn {
-            background: rgba(255, 0, 0, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 0, 0, 0.3);
-            padding: 5px 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .clear-btn:hover {
-            background: rgba(255, 0, 0, 0.3);
-        }
     </style>
 </head>
 <body>
@@ -223,46 +210,13 @@
                 </thead>
                 <tbody id="historyList"></tbody>
             </table>
-            <button class="clear-btn" onclick="clearHistory()">
-                <i class="fas fa-trash-alt"></i> Clear History
-            </button>
         </div>
     </div>
 
 <script>
-    const STORAGE_KEY = 'akWingoPredictionHistory';
     let historyData = [];
     let lastFetchedPeriod = null;
-    const HISTORY_LENGTH = 20; // Increased history length
-
-    // Load history from localStorage when page loads
-    function loadHistory() {
-        const savedHistory = localStorage.getItem(STORAGE_KEY);
-        if (savedHistory) {
-            historyData = JSON.parse(savedHistory);
-            // Ensure we don't exceed the max history length
-            if (historyData.length > HISTORY_LENGTH) {
-                historyData = historyData.slice(0, HISTORY_LENGTH);
-            }
-            updateStats();
-            updateHistory();
-        }
-    }
-
-    // Save history to localStorage
-    function saveHistory() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(historyData));
-    }
-
-    // Clear history
-    function clearHistory() {
-        if (confirm('Are you sure you want to clear all prediction history?')) {
-            historyData = [];
-            localStorage.removeItem(STORAGE_KEY);
-            updateStats();
-            updateHistory();
-        }
-    }
+    const HISTORY_LENGTH = 10;
 
     async function fetchGameResult() {
         try {
@@ -317,7 +271,7 @@
         if (apiResult && apiResult.period !== lastFetchedPeriod) {
             lastFetchedPeriod = apiResult.period;
             let currentPeriod = (BigInt(apiResult.period) + 1n).toString();
-            let prediction = historyData.length > 0 ? newPredictionMethod(apiResult.period) : { type: "RED", method: "Initial prediction" };
+            let prediction = historyData.length > 0 ? newPredictionMethod(apiResult.period) : { type: "RED", method: "" };
 
             document.getElementById("currentPeriod").innerText = currentPeriod;
             document.getElementById("prediction").innerText = prediction.type;
@@ -337,8 +291,7 @@
                 result: null, 
                 resultStatus: "Pending",
                 actual: null,
-                method: prediction.method,
-                timestamp: new Date().toISOString()
+                method: prediction.method
             });
 
             // Keep only limited history
@@ -348,7 +301,6 @@
 
             updateStats();
             updateHistory();
-            saveHistory(); // Save to localStorage after each update
         }
     }
 
@@ -380,12 +332,8 @@
         });
     }
 
-    // Initial load when page starts
-    document.addEventListener('DOMContentLoaded', () => {
-        loadHistory();
-        updatePrediction();
-    });
-    
+    // Initial update
+    updatePrediction();
     // Update every 3 seconds
     setInterval(updatePrediction, 3000);
 </script>
