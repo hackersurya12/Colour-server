@@ -3,202 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AK Wingo Colour Predictor</title>
+    <title>AK Advanced Wingo Predictor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'El Messiri', sans-serif; text-align: center; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'El Messiri', sans-serif; 
+            text-align: center; 
+        }
+        
         body { 
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); 
+            background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgmqZGh4M1jDost5bvUtpgZkI91gHMWowKXhR4awaqoEWsg2NZoOYlSGXs&s=10') no-repeat center center fixed; 
+            background-size: cover; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             min-height: 100vh; 
             color: white; 
         }
-        .container { 
-            width: 900%; 
-            max-width: 450px; 
-            margin: 20px auto; 
+        
+        .container {
+            width: 98%; 
+            max-width: 420px; 
+            animation: fadeIn 0.5s ease-in-out;
         }
+        
         .box { 
-            background: rgba(255, 255, 255, 0.08); 
+            background: rgba(0, 0, 0, 0.7); 
             backdrop-filter: blur(12px); 
-            border-radius: 16px; 
+            border-radius: 15px; 
             padding: 20px; 
-            margin-bottom: 20px; 
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
+            margin-bottom: 22px; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
         }
-        .header-box {
-            background: linear-gradient(90deg, rgba(255,0,0,0.2) 0%, rgba(0,128,0,0.2) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+        
+        .box:hover {
+            transform: translateY(-5px);
         }
+        
+        h2 {
+            color: #FFD700;
+            margin-bottom: 10px;
+            font-size: 22px;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+        
         .grid { 
             display: grid; 
             grid-template-columns: repeat(2, 1fr); 
             gap: 12px; 
             margin-top: 15px; 
         }
+        
         .status-box { 
-            padding: 15px 10px; 
-            border-radius: 12px; 
-            font-size: 16px; 
+            padding: 12px; 
+            border-radius: 13px; 
+            font-size: 10px; 
             font-weight: bold; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            min-height: 80px; 
-            transition: transform 0.3s ease; 
+            transition: all 0.3s ease;
         }
+        
         .status-box:hover {
-            transform: translateY(-3px);
+            transform: scale(1.03);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
         }
+        
         .green { 
-            background: linear-gradient(135deg, rgba(0, 255, 0, 0.15) 0%, rgba(0, 150, 0, 0.25) 100%); 
-            border: 1px solid rgba(0, 255, 0, 0.3); 
+            background: linear-gradient(135deg, rgba(0, 255, 0, 0.2), rgba(0, 150, 0, 0.3)); 
+            border: 1px solid rgba(0, 255, 0, 0.5); 
         }
+        
         .red { 
-            background: linear-gradient(135deg, rgba(255, 0, 0, 0.15) 0%, rgba(150, 0, 0, 0.25) 100%); 
-            border: 1px solid rgba(255, 0, 0, 0.3); 
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(150, 0, 0, 0.3)); 
+            border: 1px solid rgba(255, 0, 0, 0.5); 
         }
+        
         .blue { 
-            background: linear-gradient(135deg, rgba(0, 0, 255, 0.15) 0%, rgba(0, 0, 150, 0.25) 100%); 
-            border: 1px solid rgba(0, 0, 255, 0.3); 
+            background: linear-gradient(135deg, rgba(0, 0, 255, 0.2), rgba(0, 0, 150, 0.3)); 
+            border: 1px solid rgba(0, 0, 255, 0.5); 
         }
+        
         .grey { 
-            background: linear-gradient(135deg, rgba(128, 128, 128, 0.15) 0%, rgba(80, 80, 80, 0.25) 100%); 
-            border: 1px solid rgba(128, 128, 128, 0.3); 
+            background: linear-gradient(135deg, rgba(128, 128, 128, 0.2), rgba(80, 80, 80, 0.3)); 
+            border: 1px solid rgba(128, 128, 128, 0.5); 
         }
+        
         table { 
             width: 100%; 
-            border-collapse: separate; 
-            border-spacing: 0 8px; 
+            border-collapse: separate;
+            border-spacing: 0 8px;
         }
+        
         th, td { 
-            padding: 10px 5px; 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+            padding: 8px 5px; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2); 
         }
+        
         th {
             background: rgba(255, 255, 255, 0.1);
             font-weight: 700;
         }
+        
         tr {
             background: rgba(255, 255, 255, 0.05);
             transition: all 0.3s ease;
         }
+        
         tr:hover {
             background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
         }
+        
         .win {
             color: #00ff00;
             font-weight: bold;
-            text-shadow: 
-                0 0 5px #00ff00,
-                0 0 10px #00ff00,
-                0 0 20px #00ff00;
-            animation: pulseWin 2s infinite;
+            text-shadow: 0 0 5px #00ff00;
+            animation: pulse 1.5s infinite;
         }
+        
         .loss { 
             color: #ff0000; 
             font-weight: bold; 
             text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
         }
+        
         .pending { 
-            color: #0099ff; 
+            color: #00BFFF; 
             font-weight: bold; 
-            text-shadow: 0 0 5px rgba(0, 153, 255, 0.5);
+            text-shadow: 0 0 5px rgba(0, 191, 255, 0.5);
         }
-        h2 {
-            margin-bottom: 10px;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-            position: relative;
-            display: inline-block;
+        
+        #currentPeriod {
+            font-weight: bold;
+            color: #FFD700;
         }
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+        
+        #prediction {
+            font-weight: bold;
+            font-size: 20px;
+            color: #4ECDC4;
+            text-shadow: 0 0 5px rgba(78, 205, 196, 0.5);
         }
-        @keyframes pulseWin {
-            0% { opacity: 0.8; }
-            50% { opacity: 1; }
-            100% { opacity: 0.8; }
+        
+        .timer {
+            margin-top: 10px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
         }
-        .info-row {
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .status-icon {
+            margin-right: 5px;
+        }
+        
+        .algorithm-info {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 10px;
+            text-align: left;
+        }
+        
+        .action-buttons {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 15px;
         }
-        .info-row:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
+        
+        .action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
-        .prediction-value {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-top: 5px;
+        
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
         }
-        .method-info {
-            font-size: 0.8em;
-            color: rgba(255, 255, 255, 0.7);
-            margin-top: 5px;
+        
+        .action-btn i {
+            font-size: 14px;
         }
+        
+        #copyBtn {
+            background: rgba(78, 205, 196, 0.2);
+            border-color: rgba(78, 205, 196, 0.5);
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+  
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="box header-box">
-            <h2><i class="fas fa-crown" style="margin-right: 10px;"></i>AK WINGO 1M COLOUR SERVER</h2>
-        </div>
         <div class="box">
-            <div class="info-row">
-                <span><b>Period:</b></span>
-                <span id="currentPeriod">Loading...</span>
-            </div>
-            <div class="info-row">
-                <span><b>Prediction:</b></span>
-                <span id="prediction" class="prediction-value">Loading...</span>
-            </div>
-            <div id="methodInfo" class="method-info">Calculating based on period analysis...</div>
+            <h2><i class="fas fa-crown status-icon"></i>AK WINGO COLOUR PREDICTOR</h2>
+            <div class="timer">Last updated: <span id="updateTime">Just now</span></div>
         </div>
+        
         <div class="box">
-            <h2><i class="fas fa-chart-bar" style="margin-right: 10px;"></i>Analysis</h2>
+            <p><b>Period:</b> <span id="currentPeriod">Loading...</span></p>
+            <p><b>Prediction:</b> <span id="prediction">Loading...</span></p>
+            <div class="confidence-meter">
+                <div class="confidence-level" id="confidenceLevel" style="width: 0%"></div>
+            </div>
+            <div class="action-buttons">
+                <button id="copyBtn" class="action-btn" onclick="copyPrediction()">
+                    <i class="fas fa-copy"></i> Copy Prediction
+                </button>
+            </div>
+            <div class="algorithm-info" id="algorithmInfo">
+                Analyzing period patterns...
+            </div>
+        </div>
+        
+        <div class="box">
+            <h2><i class="fas fa-chart-pie status-icon"></i>Analysis</h2>
             <div class="grid">
                 <div class="status-box green">
-                    <i class="fas fa-trophy" style="margin-bottom: 5px;"></i>
-                    <p>WIN Count</p>
-                    <span id="totalWins" style="font-size: 1.3em;">0</span>
+                    <p><i class="fas fa-trophy"></i> WIN Count</p>
+                    <span id="totalWins">0</span>
                 </div>
                 <div class="status-box red">
-                    <i class="fas fa-times-circle" style="margin-bottom: 5px;"></i>
-                    <p>Lost Count</p>
-                    <span id="totalLosses" style="font-size: 1.3em;">0</span>
+                    <p><i class="fas fa-times-circle"></i> Lost Count</p>
+                    <span id="totalLosses">0</span>
                 </div>
                 <div class="status-box blue">
-                    <i class="fas fa-percentage" style="margin-bottom: 5px;"></i>
-                    <p>WIN %</p>
-                    <span id="accuracy" style="font-size: 1.3em;">0%</span>
+                    <p><i class="fas fa-percentage"></i> WIN %</p>
+                    <span id="accuracy">0%</span>
                 </div>
                 <div class="status-box grey">
-                    <i class="fas fa-sync-alt" style="margin-bottom: 5px;"></i>
-                    <p>Auto-Reverse</p>
-                    <span style="font-size: 1.1em;">Active</span>
+                    <p><i class="fas fa-sync-alt"></i> Pattern Mode</p>
+                    <span>Advanced</span>
                 </div>
             </div>
         </div>
+        
         <div class="box">
-            <h2><i class="fas fa-history" style="margin-right: 10px;"></i>History</h2>
+            <h2><i class="fas fa-history status-icon"></i>History</h2>
             <table id="historyTable">
                 <thead>
                     <tr>
@@ -212,15 +295,64 @@
             </table>
         </div>
     </div>
+    
+    <div class="toast" id="toast"></div>
 
 <script>
-    let historyData = [];
+    let historyData = JSON.parse(localStorage.getItem('wingoHistory')) || [];
     let lastFetchedPeriod = null;
     const HISTORY_LENGTH = 10;
+    let patternAnalysis = [];
+    let lastResults = [];
 
-    async function fetchGameResult() {
+    // Show toast message
+    function showToast(message, duration = 2000) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, duration);
+    }
+
+    // Update timestamp
+    function updateTimestamp() {
+        document.getElementById('updateTime').textContent = new Date().toLocaleTimeString();
+    }
+
+    // Fetch current game issue
+    async function fetchCurrentGameIssue() {
         try {
-            let response = await fetch("https://api.bdg88zf.com/api/webapi/GetNoaverageEmerdList", {
+            const response = await fetch("https://api.bdg88zf.com/api/webapi/GetGameIssue", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    typeId: 1,
+                    language: 0,
+                    random: "40079dcba93a48769c6ee9d4d4fae23f",
+                    signature: "D12108C4F57C549D82B23A91E0FA20AE",
+                    timestamp: Math.floor(Date.now() / 1000)
+                })
+            });
+
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            
+            const data = await response.json();
+            if (data.code === 0) {
+                return data.data.issueNumber;
+            }
+            return null;
+        } catch (error) {
+            console.error("Error fetching current game issue:", error);
+            return null;
+        }
+    }
+
+    // Fetch game results
+    async function fetchGameResults() {
+        try {
+            const response = await fetch("https://api.bdg88zf.com/api/webapi/GetNoaverageEmerdList", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -228,120 +360,240 @@
                     pageNo: 1,
                     typeId: 1,
                     language: 0,
-                    random: "4a0522c6ecd8410496260e686be2a57c",
-                    signature: "334B5E70A0C9B8918B0B15E517E2069C",
+                    random: "c2505d9138da4e3780b2c2b34f2fb789",
+                    signature: "7D637E060DA35C0C6E28DC6D23D71BED",
                     timestamp: Math.floor(Date.now() / 1000)
                 })
             });
 
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-            let data = await response.json();
-            let latestResult = data?.data?.list?.[0];
-
-            return latestResult ? { period: latestResult.issueNumber, result: latestResult.number } : null;
+            
+            const data = await response.json();
+            if (data.code === 0 && data.data.list.length > 0) {
+                lastResults = data.data.list.map(item => ({
+                    period: item.issueNumber,
+                    result: parseInt(item.number)
+                }));
+                return lastResults;
+            }
+            return [];
         } catch (error) {
-            console.error("Error fetching game result:", error);
-            return null;
+            console.error("Error fetching game results:", error);
+            return [];
         }
     }
 
-    function getColorFromNumber(number) {
-        // 1,3,7,9 is GREEN | 0,2,4,5,6,8 is RED
-        return [1,3,7,9].includes(number) ? 'GREEN' : 'RED';
+    // Determine if number is GREEN or RED
+    function getResultColor(number) {
+        // 1,3,5,7,9 is GREEN | 0,2,4,6,8 is RED
+        return [1,3,5,7,9].includes(number) ? 'GREEN' : 'RED';
     }
 
-    function newPredictionMethod(period) {
-        // New method based on last 2 digits of period number
-        const last2Digits = period.slice(-2);
-        const digitSum = last2Digits.split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+    // Advanced prediction algorithm based on period number
+    function calculatePrediction(period) {
+        const periodStr = period.toString();
+        patternAnalysis = [];
+        let greenScore = 0;
+        let redScore = 0;
+        let confidence = 50;
         
-        // If sum is even and greater than 10, predict GREEN
-        // If sum is odd or less than or equal to 10, predict RED
-        const predictionType = (digitSum % 2 === 0 && digitSum > 10) ? 'GREEN' : 'RED';
+        // 1. Last Digit Analysis (Most Important)
+        const lastDigit = parseInt(periodStr.slice(-1));
+       // patternAnalysis.push(`Last Digit: ${lastDigit}`);
         
-        return {
-            type: predictionType,
-            method: `Period analysis (Last 2 digits: ${last2Digits}, Sum: ${digitSum})`
-        };
-    }
-
-    function getShortPeriod(period) {
-        // Show only last 4 digits of the period number
-        return period.slice(-4);
-    }
-
-    async function updatePrediction() {
-        let apiResult = await fetchGameResult();
-
-        if (apiResult && apiResult.period !== lastFetchedPeriod) {
-            lastFetchedPeriod = apiResult.period;
-            let currentPeriod = (BigInt(apiResult.period) + 1n).toString();
-            let prediction = historyData.length > 0 ? newPredictionMethod(apiResult.period) : { type: "RED", method: "" };
-
-            document.getElementById("currentPeriod").innerText = currentPeriod;
-            document.getElementById("prediction").innerText = prediction.type;
-            document.getElementById("methodInfo").innerText = prediction.method;
-
-            // Store the actual result for the previous period
-            if (historyData.length > 0 && historyData[0].resultStatus === "Pending") {
-                const actualResult = getColorFromNumber(apiResult.result);
-                historyData[0].actual = actualResult;
-                historyData[0].resultStatus = (historyData[0].prediction === actualResult) ? "WIN" : "LOSS";
+        // Direct mapping for last digit
+        if ([1,3,5,7,9].includes(lastDigit)) {
+            greenScore += 5;
+            confidence += 15;
+        } else {
+            redScore += 5;
+            confidence += 15;
+        }
+        
+        // 2. Digit Sum Analysis
+        const digitSum = periodStr.split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+        const digitSumLast = digitSum % 10;
+       // patternAnalysis.push(`Digit Sum: ${digitSum} (${digitSumLast})`);
+        
+        if ([1,3,5,7,9].includes(digitSumLast)) {
+            greenScore += 3;
+            confidence += 8;
+        } else {
+            redScore += 3;
+            confidence += 8;
+        }
+        
+        // 3. Digit Sequence Pattern
+        const digits = periodStr.split('').map(Number);
+        
+        // Check for ascending/descending sequences
+        if (digits.length >= 3) {
+            let ascCount = 0, descCount = 0;
+            for (let i = 1; i < digits.length; i++) {
+                if (digits[i] === digits[i-1] + 1) ascCount++;
+                if (digits[i] === digits[i-1] - 1) descCount++;
             }
+            
+            if (ascCount >= 2) {
+               // patternAnalysis.push(`Ascending Pattern`);
+                greenScore += 3;
+                confidence += 7;
+            }
+            if (descCount >= 2) {
+                //patternAnalysis.push(`Descending Pattern`);
+                redScore += 3;
+                confidence += 7;
+            }
+        }
+        
+        // 4. Historical Pattern Matching (last 5 results)
+        if (lastResults.length >= 5) {
+            const last5 = lastResults.slice(0, 5);
+            const last5Green = last5.filter(r => [1,3,5,7,9].includes(r.result)).length;
+            
+            if (last5Green >= 4) {
+                //patternAnalysis.push(`Recent GREEN trend`);
+                redScore += 2; // Reverse trend
+                confidence += 5;
+            } else if (last5Green <= 1) {
+               // patternAnalysis.push(`Recent RED trend`);
+                greenScore += 2; // Reverse trend
+                confidence += 5;
+            }
+        }
+        
+        // Final confidence calculation
+        confidence = Math.min(95, Math.max(25, confidence));
+        
+        // Apply confidence to scores
+        greenScore = Math.round(greenScore * (confidence / 50));
+        redScore = Math.round(redScore * (confidence / 50));
+        
+        document.getElementById('confidenceLevel').style.width = `${confidence}%`;
+        
+        // Final decision with tie-breaker
+        if (greenScore === redScore) {
+            // If scores are equal, use the last digit's natural tendency
+            return [1,3,5,7,9].includes(lastDigit) ? 
+                { prediction: 'GREEN', confidence: confidence + 5 } : 
+                { prediction: 'RED', confidence: confidence + 5 };
+        }
+        
+        return greenScore > redScore ? 
+            { prediction: 'GREEN', confidence } : 
+            { prediction: 'RED', confidence };
+    }
 
-            // Add new prediction for current period
-            historyData.unshift({ 
-                period: currentPeriod, 
-                prediction: prediction.type, 
-                result: null, 
-                resultStatus: "Pending",
-                actual: null,
-                method: prediction.method
+    // Copy prediction to clipboard
+    function copyPrediction() {
+        const prediction = document.getElementById("prediction").textContent;
+        const period = document.getElementById("currentPeriod").textContent;
+        const textToCopy = `Wingo Prediction for Period ${period}: ${prediction}`;
+        
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            showToast('Prediction copied to clipboard!');
+            const btn = document.getElementById("copyBtn");
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-copy"></i> Copy Prediction';
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            showToast('Failed to copy: ' + err, 3000);
+        });
+    }
+
+    // Update the prediction display
+    async function updatePrediction() {
+        updateTimestamp();
+        
+        const currentPeriod = await fetchCurrentGameIssue();
+        if (!currentPeriod) return;
+        
+        document.getElementById("currentPeriod").textContent = currentPeriod;
+        
+        // Only proceed if we have a new period
+        if (lastFetchedPeriod !== currentPeriod) {
+            lastFetchedPeriod = currentPeriod;
+            
+            // Get results to check previous predictions
+            await fetchGameResults();
+            if (lastResults.length > 0) {
+                // Update previous prediction status if available
+                if (historyData.length > 0 && historyData[0].status === 'PENDING') {
+                    const prevPeriod = historyData[0].period;
+                    const prevResult = lastResults.find(r => r.period === prevPeriod);
+                    
+                    if (prevResult) {
+                        const resultColor = getResultColor(prevResult.result);
+                        historyData[0].result = resultColor;
+                        historyData[0].status = historyData[0].prediction === resultColor ? 'WIN' : 'LOSS';
+                    }
+                }
+            }
+            
+            // Calculate new prediction with advanced method
+            const { prediction, confidence } = calculatePrediction(currentPeriod);
+            document.getElementById("prediction").textContent = prediction;
+            document.getElementById("prediction").className = prediction.toLowerCase();
+            document.getElementById("algorithmInfo").innerHTML = patternAnalysis.join(' &bull; ');
+            document.getElementById("confidenceLevel").style.width = `${confidence}%`;
+            
+            // Add to history
+            historyData.unshift({
+                period: currentPeriod,
+                prediction: prediction,
+                result: null,
+                status: 'PENDING',
+                confidence: confidence
             });
-
-            // Keep only limited history
+            
+            // Keep history limited
             if (historyData.length > HISTORY_LENGTH) {
                 historyData = historyData.slice(0, HISTORY_LENGTH);
             }
-
+            
+            // Save to local storage
+            localStorage.setItem('wingoHistory', JSON.stringify(historyData));
+            
             updateStats();
             updateHistory();
         }
     }
 
     function updateStats() {
-        let totalWins = historyData.filter(item => item.resultStatus === "WIN").length;
-        let totalLosses = historyData.filter(item => item.resultStatus === "LOSS").length;
-        let totalPredictions = totalWins + totalLosses;
-        let accuracy = totalPredictions ? ((totalWins / totalPredictions) * 100).toFixed(2) + "%" : "0%";
-
-        document.getElementById("totalWins").innerText = totalWins;
-        document.getElementById("totalLosses").innerText = totalLosses;
-        document.getElementById("accuracy").innerText = accuracy;
+        const wins = historyData.filter(item => item.status === 'WIN').length;
+        const losses = historyData.filter(item => item.status === 'LOSS').length;
+        const total = wins + losses;
+        const accuracy = total > 0 ? ((wins / total) * 100).toFixed(2) + '%' : '0%';
+        
+        document.getElementById("totalWins").textContent = wins;
+        document.getElementById("totalLosses").textContent = losses;
+        document.getElementById("accuracy").textContent = accuracy;
     }
 
     function updateHistory() {
-        let historyTable = document.getElementById("historyList");
+        const historyTable = document.getElementById("historyList");
         historyTable.innerHTML = "";
-
+        
         historyData.forEach(item => {
-            let row = document.createElement("tr");
-            let resultDisplay = item.actual ? item.actual.charAt(0) : "-";
+            const row = document.createElement("tr");
+            const resultDisplay = item.result ? item.result.charAt(0) : '-';
+            
             row.innerHTML = `
-                <td>${getShortPeriod(item.period)}</td>
-                <td>${item.prediction}</td>
+                <td>${item.period}</td>
+                <td class="${item.prediction.toLowerCase()}">${item.prediction}</td>
                 <td>${resultDisplay}</td>
-                <td class="${item.resultStatus.toLowerCase()}">${item.resultStatus}</td>
+                <td class="${item.status.toLowerCase()}">${item.status}</td>
             `;
             historyTable.appendChild(row);
         });
     }
 
-    // Initial update
+    // Initialize
     updatePrediction();
-    // Update every 3 seconds
-    setInterval(updatePrediction, 3000);
+    // Update every 5 seconds
+    setInterval(updatePrediction, 5000);
 </script>
 </body>
 </html>
