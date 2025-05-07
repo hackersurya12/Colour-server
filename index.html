@@ -252,17 +252,23 @@
     }
 
     function newPredictionMethod(period) {
-        // New method based on last 4 digits of period number
-        const last4Digits = period.slice(-4);
-        const digitSum = last4Digits.split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+        // New method based on last 2 digits of period number
+        const last2Digits = period.slice(-2);
+        const digitSum = last2Digits.split('').reduce((sum, digit) => sum + parseInt(digit), 0);
         
-        // If sum is even, predict RED, if odd, predict GREEN
-        const predictionType = digitSum % 2 === 0 ? 'RED' : 'GREEN';
+        // If sum is even and greater than 10, predict GREEN
+        // If sum is odd or less than or equal to 10, predict RED
+        const predictionType = (digitSum % 2 === 0 && digitSum > 10) ? 'GREEN' : 'RED';
         
         return {
             type: predictionType,
-            method: `Period analysis (Sum: ${digitSum})`
+            method: `Period analysis (Last 2 digits: ${last2Digits}, Sum: ${digitSum})`
         };
+    }
+
+    function getShortPeriod(period) {
+        // Show only last 4 digits of the period number
+        return period.slice(-4);
     }
 
     async function updatePrediction() {
@@ -323,7 +329,7 @@
             let row = document.createElement("tr");
             let resultDisplay = item.actual ? item.actual.charAt(0) : "-";
             row.innerHTML = `
-                <td>${item.period}</td>
+                <td>${getShortPeriod(item.period)}</td>
                 <td>${item.prediction}</td>
                 <td>${resultDisplay}</td>
                 <td class="${item.resultStatus.toLowerCase()}">${item.resultStatus}</td>
