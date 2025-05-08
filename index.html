@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AK Advanced Wingo Predictor</title>
+    <title>AK Updated Wingo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -177,84 +177,20 @@
             margin-top: 10px;
             text-align: left;
         }
-        
-        .action-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-        }
-        
-        .action-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-        
-        .action-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-        
-        .action-btn i {
-            font-size: 14px;
-        }
-        
-        #copyBtn {
-            background: rgba(78, 205, 196, 0.2);
-            border-color: rgba(78, 205, 196, 0.5);
-        }
-        
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-        
-        .toast.show {
-            opacity: 1;
-        }
-        
-  
     </style>
 </head>
 <body>
     <div class="container">
         <div class="box">
-            <h2><i class="fas fa-crown status-icon"></i>AK WINGO COLOUR PREDICTOR</h2>
+            <h2><i class="fas fa-crown status-icon"></i>SURYA AK WINGO 1M</h2>
             <div class="timer">Last updated: <span id="updateTime">Just now</span></div>
         </div>
         
         <div class="box">
             <p><b>Period:</b> <span id="currentPeriod">Loading...</span></p>
             <p><b>Prediction:</b> <span id="prediction">Loading...</span></p>
-            <div class="confidence-meter">
-                <div class="confidence-level" id="confidenceLevel" style="width: 0%"></div>
-            </div>
-            <div class="action-buttons">
-                <button id="copyBtn" class="action-btn" onclick="copyPrediction()">
-                    <i class="fas fa-copy"></i> Copy Prediction
-                </button>
-            </div>
             <div class="algorithm-info" id="algorithmInfo">
-                Analyzing period patterns...
+               
             </div>
         </div>
         
@@ -274,8 +210,8 @@
                     <span id="accuracy">0%</span>
                 </div>
                 <div class="status-box grey">
-                    <p><i class="fas fa-sync-alt"></i> Pattern Mode</p>
-                    <span>Advanced</span>
+                    <p><i class="fas fa-sync-alt"></i> Auto-Reverse</p>
+                    <span>Active</span>
                 </div>
             </div>
         </div>
@@ -295,26 +231,12 @@
             </table>
         </div>
     </div>
-    
-    <div class="toast" id="toast"></div>
 
 <script>
     let historyData = JSON.parse(localStorage.getItem('wingoHistory')) || [];
     let lastFetchedPeriod = null;
     const HISTORY_LENGTH = 10;
     let patternAnalysis = [];
-    let lastResults = [];
-
-    // Show toast message
-    function showToast(message, duration = 2000) {
-        const toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.classList.add('show');
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, duration);
-    }
 
     // Update timestamp
     function updateTimestamp() {
@@ -370,11 +292,10 @@
             
             const data = await response.json();
             if (data.code === 0 && data.data.list.length > 0) {
-                lastResults = data.data.list.map(item => ({
+                return data.data.list.map(item => ({
                     period: item.issueNumber,
-                    result: parseInt(item.number)
+                    result: item.number
                 }));
-                return lastResults;
             }
             return [];
         } catch (error) {
@@ -383,124 +304,23 @@
         }
     }
 
-    // Determine if number is GREEN or RED
-    function getResultColor(number) {
-        // 1,3,5,7,9 is GREEN | 0,2,4,6,8 is RED
-        return [1,3,5,7,9].includes(number) ? 'GREEN' : 'RED';
-    }
-
-    // Advanced prediction algorithm based on period number
+    // Enhanced prediction algorithm based on last 5 digits (now predicts GREEN/RED)
     function calculatePrediction(period) {
         const periodStr = period.toString();
-        patternAnalysis = [];
-        let greenScore = 0;
-        let redScore = 0;
-        let confidence = 50;
+        // Take last 5 digits of the period
+        const last5Digits = periodStr.slice(-5).padStart(5, '0');
+        const digits = last5Digits.split('').map(Number);
         
-        // 1. Last Digit Analysis (Most Important)
-        const lastDigit = parseInt(periodStr.slice(-1));
-       // patternAnalysis.push(`Last Digit: ${lastDigit}`);
+        // Calculate sum of digits
+        const digitSum = digits.reduce((a, b) => a + b, 0);
         
-        // Direct mapping for last digit
-        if ([1,3,5,7,9].includes(lastDigit)) {
-            greenScore += 5;
-            confidence += 15;
-        } else {
-            redScore += 5;
-            confidence += 15;
-        }
-        
-        // 2. Digit Sum Analysis
-        const digitSum = periodStr.split('').reduce((sum, digit) => sum + parseInt(digit), 0);
-        const digitSumLast = digitSum % 10;
-       // patternAnalysis.push(`Digit Sum: ${digitSum} (${digitSumLast})`);
-        
-        if ([1,3,5,7,9].includes(digitSumLast)) {
-            greenScore += 3;
-            confidence += 8;
-        } else {
-            redScore += 3;
-            confidence += 8;
-        }
-        
-        // 3. Digit Sequence Pattern
-        const digits = periodStr.split('').map(Number);
-        
-        // Check for ascending/descending sequences
-        if (digits.length >= 3) {
-            let ascCount = 0, descCount = 0;
-            for (let i = 1; i < digits.length; i++) {
-                if (digits[i] === digits[i-1] + 1) ascCount++;
-                if (digits[i] === digits[i-1] - 1) descCount++;
-            }
-            
-            if (ascCount >= 2) {
-               // patternAnalysis.push(`Ascending Pattern`);
-                greenScore += 3;
-                confidence += 7;
-            }
-            if (descCount >= 2) {
-                //patternAnalysis.push(`Descending Pattern`);
-                redScore += 3;
-                confidence += 7;
-            }
-        }
-        
-        // 4. Historical Pattern Matching (last 5 results)
-        if (lastResults.length >= 5) {
-            const last5 = lastResults.slice(0, 5);
-            const last5Green = last5.filter(r => [1,3,5,7,9].includes(r.result)).length;
-            
-            if (last5Green >= 4) {
-                //patternAnalysis.push(`Recent GREEN trend`);
-                redScore += 2; // Reverse trend
-                confidence += 5;
-            } else if (last5Green <= 1) {
-               // patternAnalysis.push(`Recent RED trend`);
-                greenScore += 2; // Reverse trend
-                confidence += 5;
-            }
-        }
-        
-        // Final confidence calculation
-        confidence = Math.min(95, Math.max(25, confidence));
-        
-        // Apply confidence to scores
-        greenScore = Math.round(greenScore * (confidence / 50));
-        redScore = Math.round(redScore * (confidence / 50));
-        
-        document.getElementById('confidenceLevel').style.width = `${confidence}%`;
-        
-        // Final decision with tie-breaker
-        if (greenScore === redScore) {
-            // If scores are equal, use the last digit's natural tendency
-            return [1,3,5,7,9].includes(lastDigit) ? 
-                { prediction: 'GREEN', confidence: confidence + 5 } : 
-                { prediction: 'RED', confidence: confidence + 5 };
-        }
-        
-        return greenScore > redScore ? 
-            { prediction: 'GREEN', confidence } : 
-            { prediction: 'RED', confidence };
+        // Determine if sum is odd (GREEN) or even (RED)
+        return digitSum % 2 === 1 ? 'GREEN' : 'RED';
     }
 
-    // Copy prediction to clipboard
-    function copyPrediction() {
-        const prediction = document.getElementById("prediction").textContent;
-        const period = document.getElementById("currentPeriod").textContent;
-        const textToCopy = `Wingo Prediction for Period ${period}: ${prediction}`;
-        
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            showToast('Prediction copied to clipboard!');
-            const btn = document.getElementById("copyBtn");
-            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-            setTimeout(() => {
-                btn.innerHTML = '<i class="fas fa-copy"></i> Copy Prediction';
-            }, 2000);
-        }).catch(err => {
-            console.error('Failed to copy: ', err);
-            showToast('Failed to copy: ' + err, 3000);
-        });
+    // Determine if number is GREEN or RED (1,3,5,7,9 = GREEN; 0,2,4,6,8 = RED)
+    function getResultType(number) {
+        return number % 2 === 1 ? 'GREEN' : 'RED';
     }
 
     // Update the prediction display
@@ -517,35 +337,32 @@
             lastFetchedPeriod = currentPeriod;
             
             // Get results to check previous predictions
-            await fetchGameResults();
-            if (lastResults.length > 0) {
+            const results = await fetchGameResults();
+            if (results.length > 0) {
                 // Update previous prediction status if available
                 if (historyData.length > 0 && historyData[0].status === 'PENDING') {
                     const prevPeriod = historyData[0].period;
-                    const prevResult = lastResults.find(r => r.period === prevPeriod);
+                    const prevResult = results.find(r => r.period === prevPeriod);
                     
                     if (prevResult) {
-                        const resultColor = getResultColor(prevResult.result);
-                        historyData[0].result = resultColor;
-                        historyData[0].status = historyData[0].prediction === resultColor ? 'WIN' : 'LOSS';
+                        const resultType = getResultType(prevResult.result);
+                        historyData[0].result = resultType;
+                        historyData[0].status = historyData[0].prediction === resultType ? 'WIN' : 'LOSS';
                     }
                 }
             }
             
-            // Calculate new prediction with advanced method
-            const { prediction, confidence } = calculatePrediction(currentPeriod);
+            // Calculate new prediction with enhanced algorithm
+            const prediction = calculatePrediction(currentPeriod);
             document.getElementById("prediction").textContent = prediction;
-            document.getElementById("prediction").className = prediction.toLowerCase();
-            document.getElementById("algorithmInfo").innerHTML = patternAnalysis.join(' &bull; ');
-            document.getElementById("confidenceLevel").style.width = `${confidence}%`;
+            //document.getElementById("algorithmInfo").innerHTML = " (odd=GREEN, even=RED)";
             
             // Add to history
             historyData.unshift({
                 period: currentPeriod,
                 prediction: prediction,
                 result: null,
-                status: 'PENDING',
-                confidence: confidence
+                status: 'PENDING'
             });
             
             // Keep history limited
@@ -578,11 +395,13 @@
         
         historyData.forEach(item => {
             const row = document.createElement("tr");
-            const resultDisplay = item.result ? item.result.charAt(0) : '-';
+            const resultDisplay = item.result ? (item.result === 'GREEN' ? 'G' : 'R') : '-';
+            // Show only last 4 digits of the period
+            const shortPeriod = item.period.toString().slice(-4);
             
             row.innerHTML = `
-                <td>${item.period}</td>
-                <td class="${item.prediction.toLowerCase()}">${item.prediction}</td>
+                <td>${shortPeriod}</td>
+                <td>${item.prediction === 'GREEN' ? 'GREEN' : 'RED'}</td>
                 <td>${resultDisplay}</td>
                 <td class="${item.status.toLowerCase()}">${item.status}</td>
             `;
